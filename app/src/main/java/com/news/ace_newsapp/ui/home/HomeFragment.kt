@@ -13,6 +13,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.tabs.TabLayout
+import com.news.ace_newsapp.R
 import com.news.ace_newsapp.data.model.NewsData
 import com.news.ace_newsapp.data.model.NewsResponse
 import com.news.ace_newsapp.databinding.FragmentHomeBinding
@@ -20,9 +22,10 @@ import com.news.ace_newsapp.network.Resource
 import com.news.ace_newsapp.ui.MainViewModel
 import com.news.ace_newsapp.ui.details.DetailsActivity
 import com.news.ace_newsapp.ui.home.adapter.TopHeadlineAdapter
+import com.news.ace_newsapp.ui.home.adapter.ViewPagerAdapter
 import com.news.ace_newsapp.utils.AppConstant
 
-class HomeFragment : Fragment(),TopHeadlineAdapter.NewsItemClickListener {
+class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
 
@@ -50,90 +53,48 @@ class HomeFragment : Fragment(),TopHeadlineAdapter.NewsItemClickListener {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-//        val textView: TextView = binding.textHome
-//        homeViewModel.text.observe(viewLifecycleOwner) {
-//            textView.text = it
-//        }
+        setupTabLayout()
+        setupViewPager()
+
+
         return root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setUpUI()
-        fetchNews(pageNumber)
     }
 
-    private fun setUpUI() {
-        articleList = arrayListOf()
-        manager = LinearLayoutManager(requireContext())
-        topHeadlineAdapter = TopHeadlineAdapter(articleList,this)
-        binding.rvNews.apply {
-            layoutManager = manager
-            adapter = topHeadlineAdapter
+    private fun setupViewPager() {
+        binding.viewPager.apply {
+            adapter = ViewPagerAdapter(parentFragmentManager, binding.tabLayout.tabCount)
+            addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(binding.tabLayout))
         }
+    }
 
-        topHeadlineAdapter.setOnItemClickListener { news ->
-//            val bundle = Bundle().apply {
-//                putSerializable("news", news)
-//            }
-//            findNavController().navigate(
-//                R.id.action_navigation_top_headline_to_navigation_news_detail,
-//                bundle
-//            )
-            val intent = Intent(requireActivity(),DetailsActivity::class.java)
-            val bundle = Bundle()
-            bundle.putSerializable("news", news)
-            intent.putExtras(bundle)
-            startActivity(intent)
-        }
-
-        binding.rvNews.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-                if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
-                    isScrolling = true
-                }
+    private fun setupTabLayout() {
+        val titleArray = resources.getStringArray(R.array.news_category)
+        binding.tabLayout.apply {
+            for(title in titleArray){
+                addTab(this.newTab().setText(title))
             }
 
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                currentItems = manager.childCount
-                totalItems = manager.itemCount
-                scrollOutItems = manager.findFirstVisibleItemPosition()
-                if (isScrolling && (currentItems + scrollOutItems == totalItems)) {
-                    isScrolling = false
-                    if (articleList.size % AppConstant.PAGE_SIZE == 0) {
-                        pageNumber += 1
-                        fetchNews(pageNumber)
+            addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+                override fun onTabSelected(tab: TabLayout.Tab?) {
+                    tab?.position?.let {
+                        binding.viewPager.currentItem = it
                     }
                 }
-            }
-        })
+
+                override fun onTabUnselected(tab: TabLayout.Tab?) {
+                }
+
+                override fun onTabReselected(tab: TabLayout.Tab?) {
+                }
+            })
+        }
     }
 
-    private fun fetchNews(pageSize: Int) {
-        viewModel.getNew(pageSize).observe(this, Observer {
-            when(it.status){
-                Resource.Status.LOADING -> {
-                    binding.progressBar.visibility = View.VISIBLE
-                }
-                Resource.Status.ERROR -> {
-                    binding.progressBar.visibility = View.VISIBLE
-                }
-                Resource.Status.SUCCESS -> {
-                    binding.progressBar.visibility = View.GONE
-
-                    setContentView(it.data!!)
-                }
-            }
-        })
-    }
-
-    private fun setContentView(data: NewsResponse) {
-        articleList.addAll(data.articles)
-        topHeadlineAdapter.notifyDataSetChanged()
-    }
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -141,9 +102,4 @@ class HomeFragment : Fragment(),TopHeadlineAdapter.NewsItemClickListener {
         _binding = null
     }
 
-    override fun onSaveItemClick(data: NewsData) {
-        viewModel.saveNews(data)
-        Toast.makeText(requireActivity(), "Successfully saved!", Toast.LENGTH_SHORT).show()
-
-    }
 }

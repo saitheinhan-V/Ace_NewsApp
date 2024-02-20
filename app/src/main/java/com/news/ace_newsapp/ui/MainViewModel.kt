@@ -31,10 +31,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         getSavedNews()
     }
 
-    fun getNew(pageNumber: Int) = liveData(Dispatchers.IO) {
+    fun getNew(pageNumber: Int,category: String) = liveData(Dispatchers.IO) {
         emit(Resource.loading(data = null))
         try {
-            val data = repository.getNews(pageNumber)
+            val data = repository.getNews(pageNumber,category)
             emit(Resource.success(data = data))
         } catch (responseException: HttpException) {
             emit(

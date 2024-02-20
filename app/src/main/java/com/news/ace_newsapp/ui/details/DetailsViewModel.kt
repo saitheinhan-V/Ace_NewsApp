@@ -33,26 +33,6 @@ class DetailsViewModel(application: Application) : AndroidViewModel(application)
         getSavedNews()
     }
 
-    fun getNew(pageNumber: Int) = liveData(Dispatchers.IO) {
-        emit(Resource.loading(data = null))
-        try {
-            val data = repository.getNews(pageNumber)
-            emit(Resource.success(data = data))
-        } catch (responseException: HttpException) {
-            emit(
-                Resource.error(
-                    ErrorHandler().apiError(
-                        responseException.response()?.errorBody()
-                    )
-                )
-            )
-        } catch (e: Exception) {
-            emit(Resource.error(e.message))
-        }catch (e: TimeoutException){
-            emit(Resource.error(e.message))
-        }
-    }
-
     fun saveNews(news: NewsData?) {
         viewModelScope.launch {
             newsDao.saveNews(news!!)

@@ -17,7 +17,6 @@ import com.google.android.material.snackbar.Snackbar
 import com.news.ace_newsapp.R
 import com.news.ace_newsapp.databinding.FragmentNewsDetailsBinding
 import com.news.ace_newsapp.ui.MainViewModel
-import com.news.ace_newsapp.ui.saved_news.NewsDetailsFragmentArgs
 
 class NewsDetailsFragment : Fragment() {
 
@@ -34,7 +33,7 @@ class NewsDetailsFragment : Fragment() {
 
     private val viewModel: MainViewModel by activityViewModels()
     private val detailsViewModel: DetailsViewModel by activityViewModels()
-    private val args: NewsDetailsFragmentArgs by navArgs()
+//    private val args: NewsDetailsFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater,

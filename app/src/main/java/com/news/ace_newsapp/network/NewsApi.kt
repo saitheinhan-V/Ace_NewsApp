@@ -19,5 +19,7 @@ interface NewsApi {
         pageSize: Int ?= AppConstant.PAGE_SIZE,
 //        @Query("apiKey")
 //        apiKey: String ?= AppConstant.API_KEY
+        @Query("category")
+        category: String ?= "business"
     ): NewsResponse
 }
