@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_top_headline">
+
+    <fragment
+        android:id="@+id/navigation_top_headline"
+        android:name="com.news.ace_newsapp.ui.home.HomeFragment"
+        android:label="@string/top_headline"
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_navigation_top_headline_to_navigation_news_detail"
+            app:destination="@id/navigation_news_detail" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_saved_news"
+        android:name="com.news.ace_newsapp.ui.saved_news.SavedNewsFragment"
+        android:label="@string/saved_news"
+        tools:layout="@layout/fragment_saved_news" />
+
+    <fragment
+        android:id="@+id/navigation_news_detail"
+        android:name="com.news.ace_newsapp.ui.saved_news.NewsDetailsFragment"
+        tools:layout="@layout/fragment_news_details"
+        >
+        <argument
+            android:name="news"
+            app:argType="com.news.ace_newsapp.data.model.NewsData" />
+        <action
+            android:id="@+id/action_navigation_news_detail_to_navigation_top_headline"
+            app:destination="@id/navigation_top_headline" />
+    </fragment>
+
+
+</navigation>

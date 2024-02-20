@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_top_headline"
+        android:icon="@drawable/ic_home_black_24dp"
+        android:title="@string/top_headline" />
+
+    <item
+        android:id="@+id/navigation_saved_news"
+        android:icon="@drawable/ic_fav_fill"
+        android:title="@string/saved_news" />
+
+
+
+</menu>
